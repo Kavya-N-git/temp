@@ -1,0 +1,143 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<h6>Technical Skills Info.</h6>
+                     <br />  
+                     <div class="row">
+        <div class="col-md-2 col-sm-6 col-6 p-2">
+            <label for="skill">Skillset<span id="star">*</span></label>
+            <input type="text" class="form-control" placeholder="Enter skill Eg: HTML"  id="skill" required/>
+        </div>
+        <div class="col-md-2 col-sm-6 col-6 p-2">
+            <label for="proficiency">Proficiency<span id="star">*</span></label>
+            <select  id="pro" class="form-control" required>
+                <option value="" selected hidden>--select--</option>
+                <option value="ex">excellent</option>
+                <option value="av">average</option>
+                <option value="gd">good</option>
+            </select>
+        </div>
+        </div>
+         <div class="col-md-2 col-sm-6 col-6 p-2">
+             
+             <input type="button" id="btnAdd" class="btn btn-primary" value="Add New"/>
+        </div>
+    
+
+    <div class="row pt-3">
+        <div class="col-md-12 col-sm-12 col-12 p-2">
+            <table id="tdata" class="table table-bordered table-hover table-striped" border="1" >
+                <thead>
+                    <tr style="text-align:center";>
+                        <th>SLNO</th>
+                        <th>Technical Skill</th>
+                        <th>Proficiency</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+          <div class="view_data">
+            <input type="button" value="view" id="view" name="view" onclick="createjson()">
+            <textarea id="view_data" name="view_data" class="view_data">
+              
+            </textarea>
+            <table id="view_table" border="1">
+              <thead>
+                <tr class="viewtr">
+                  <th>slno</th>
+                  <th>skills</th>
+                  <th>proficiency</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>               
+            </table>
+          </div>
+        </div>
+    </div>
+
+<script>
+
+    var emptyRow = "<tr><td colspan='5' class='text-center'> No records entered</td></tr>";
+
+    $(document).ready(function () {
+        //debugger;
+       createjson();
+        $("#tdata tbody").append(emptyRow); //adding empty row on page load
+
+        $("#btnAdd").click(function(){
+
+            var Tskill = $("#skill").val().trim();
+            var Tpro = $("#pro").find("option:selected").text();
+            var T_pro =  $("#pro");
+
+            //validation
+            if(Tskill === ""){
+                alert("please provide values");
+
+            }else if(T_pro.val() === ""){
+                alert("please select proficiency");
+            }else{
+                //debugger;
+                if($("#tdata tbody").children().children().length == 1){
+                    $("#tdata tbody").html("");
+                }
+
+                var slNo = $("#tdata tbody").children().length + 1;
+
+                //creating dynamic html string
+
+                var dynamicTr = "<tr class='table_row'><td class='sl_no'>"+slNo+"</td><td class='skill'>"+Tskill+"</td><td class='pro'>"+Tpro+"</td><td><button class='btn btn-danger btn-sm'>Delete</button></td></tr>";
+
+                //debugger;
+
+                $("#tdata tbody").append(dynamicTr);
+                $("#skill").val("");
+                $("pro").val("");
+                $(".btn-sm").click(function(){
+                    //debugger;
+                    $(this).parent().parent().remove();
+                    if($("tdata tbody").children().children().length == 0){
+                        $("tdata tbody").append(emptyRow);
+                    }
+                });
+                
+            }
+
+        });
+    });
+
+function createjson(){
+  //var tablejson = localStorage.getItem('table_data');
+  
+  var tablejson = [];
+  $('.table_row').each(function(){
+    console.log($(this));
+    var table_rowdata = {'slno':$(this).find('.sl_no').text(),'skill':$(this).find('.skill').text(),'pro':$(this).find('.pro').text()};
+    tablejson.push(table_rowdata);
+    
+  });
+  console.log(tablejson);
+  var tabledata = localStorage.getItem('table_data');
+  //if(typeof tabledata != undefined ){
+   //var tabledataarray = JSON.parse(tabledata);
+    //tablejson = tabledataarray.concat(tablejson);
+ // }
+  //$('#view_data').text(JSON.stringify(tablejson));
+  localStorage.setItem('table_data',JSON.stringify(tablejson));
+  
+  //var tabledata = localStorage.getItem('table_data');
+  tabledata = JSON.parse(tabledata);
+  for(let x in tabledata){
+    let currentele = tabledata[x];
+    
+    var view_tr = "<tr><td >"+currentele.slno+"</td><td >"+currentele.skill+"</td><td >"+currentele.pro+"</td></tr>";
+    $("#view_table tbody").append(view_tr);
+  }
+}
+
+</script>
